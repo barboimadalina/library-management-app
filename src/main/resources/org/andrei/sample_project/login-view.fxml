@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
+
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.andrei.sample_project.LoginController"
+      prefHeight="600.0" prefWidth="800.0"
+      style="-fx-background-color: linear-gradient(to bottom right, #f5e6ff, #e6f7ff);">
+
+    <padding>
+        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0"/>
+    </padding>
+
+    <VBox alignment="CENTER" spacing="30.0"
+          style="-fx-background-color: rgba(255, 255, 255, 0.95);
+                 -fx-background-radius: 15;
+                 -fx-border-color: #d4e6ff;
+                 -fx-border-width: 1;
+                 -fx-border-radius: 15;"
+          maxWidth="420">
+
+
+        <effect>
+            <DropShadow radius="10" color="rgba(150, 182, 255, 0.2)" offsetX="0" offsetY="2"/>
+        </effect>
+
+        <padding>
+            <Insets bottom="50.0" left="50.0" right="50.0" top="50.0"/>
+        </padding>
+
+
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="📚" style="-fx-font-size: 40;"/>
+            <Label text="Library System"
+                   style="-fx-text-fill: #8a7fff;
+                          -fx-font-weight: bold;">
+                <font>
+                    <Font name="System Bold" size="32.0"/>
+                </font>
+            </Label>
+            <Label text="Welcome Back"
+                   style="-fx-text-fill: #888;
+                          -fx-font-size: 14;">
+            </Label>
+        </VBox>
+
+
+        <Label fx:id="errorLabel" text="Error message"
+               style="-fx-text-fill: #ff6b8b;
+                      -fx-font-size: 13;
+                      -fx-padding: 5 10;
+                      -fx-background-color: #fff0f3;
+                      -fx-background-radius: 5;
+                      -fx-border-color: #ffd6e0;
+                      -fx-border-width: 1;
+                      -fx-border-radius: 5;"
+               visible="false"
+               maxWidth="300"
+               alignment="CENTER"/>
+
+
+        <VBox spacing="8">
+            <Label text="Username"
+                   style="-fx-text-fill: #666;
+                          -fx-font-weight: bold;">
+                <font>
+                    <Font size="13.0"/>
+                </font>
+            </Label>
+            <TextField fx:id="usernameField"
+                       promptText="Enter your username"
+                       prefWidth="320"
+                       prefHeight="45"
+                       style="-fx-background-color: #f9fbff;
+                              -fx-background-radius: 8;
+                              -fx-border-color: #d4e6ff;
+                              -fx-border-width: 1.5;
+                              -fx-border-radius: 8;
+                              -fx-padding: 12;
+                              -fx-font-size: 14;
+                              -fx-text-fill: #555;
+                              -fx-prompt-text-fill: #aac8ff;">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </TextField>
+        </VBox>
+
+
+        <VBox spacing="8">
+            <Label text="Password"
+                   style="-fx-text-fill: #666;
+                          -fx-font-weight: bold;">
+                <font>
+                    <Font size="13.0"/>
+                </font>
+            </Label>
+            <PasswordField fx:id="passwordField"
+                           promptText="Enter your password"
+                           prefWidth="320"
+                           prefHeight="45"
+                           style="-fx-background-color: #f9fbff;
+                                  -fx-background-radius: 8;
+                                  -fx-border-color: #d4e6ff;
+                                  -fx-border-width: 1.5;
+                                  -fx-border-radius: 8;
+                                  -fx-padding: 12;
+                                  -fx-font-size: 14;
+                                  -fx-text-fill: #555;
+                                  -fx-prompt-text-fill: #aac8ff;">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </PasswordField>
+        </VBox>
+
+
+        <Button fx:id="loginButton"
+                text="Login"
+                onAction="#onLogin"
+                prefWidth="320"
+                prefHeight="48"
+                style="-fx-background-color: linear-gradient(to right, #8a7fff, #6a8fff);
+                       -fx-text-fill: white;
+                       -fx-font-size: 16;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;">
+            <padding>
+                <Insets top="12" bottom="12"/>
+            </padding>
+            <effect>
+                <DropShadow radius="3" color="rgba(138, 127, 255, 0.3)" offsetX="0" offsetY="2"/>
+            </effect>
+        </Button>
+
+
+        <HBox alignment="CENTER" spacing="10">
+            <Region prefWidth="130" style="-fx-background-color: #e0eaff; -fx-pref-height: 1;"/>
+            <Label text="or" style="-fx-text-fill: #aac8ff; -fx-font-size: 12;"/>
+            <Region prefWidth="130" style="-fx-background-color: #e0eaff; -fx-pref-height: 1;"/>
+        </HBox>
+
+
+        <Button fx:id="registerButton"
+                text="Create Account"
+                onAction="#onRegister"
+                prefWidth="320"
+                prefHeight="48"
+                style="-fx-background-color: #ffcce6;
+                       -fx-text-fill: #ff6ba8;
+                       -fx-font-size: 16;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 8;
+                       -fx-cursor: hand;
+                       -fx-border-color: #ffb8d9;
+                       -fx-border-width: 1.5;">
+            <padding>
+                <Insets top="12" bottom="12"/>
+            </padding>
+        </Button>
+
+
+        <Label text="© 2024 Library System • All rights reserved"
+               style="-fx-text-fill: #aac8ff;
+                      -fx-font-size: 11;
+                      -fx-padding: 20 0 0 0;">
+        </Label>
+
+    </VBox>
+
+</VBox>

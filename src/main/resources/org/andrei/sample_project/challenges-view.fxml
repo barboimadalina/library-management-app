@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.effect.DropShadow?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.andrei.sample_project.ChallengeController"
+            prefHeight="700.0" prefWidth="1000.0"
+            style="-fx-background-color: linear-gradient(to bottom right, #fff5e6, #ffe6f0);">
+
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20.0"
+              style="-fx-background-color: linear-gradient(to right, rgba(255, 150, 100, 0.9), rgba(255, 100, 150, 0.9));"
+              prefHeight="70.0">
+
+            <effect>
+                <DropShadow radius="5" color="rgba(255, 150, 100, 0.3)" offsetX="0" offsetY="2"/>
+            </effect>
+
+            <padding>
+                <Insets left="30.0" right="30.0"/>
+            </padding>
+
+
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="🏆" style="-fx-font-size: 28;"/>
+                <VBox spacing="2">
+                    <Label text="Reading Challenges"
+                           style="-fx-text-fill: white; -fx-font-weight: bold;">
+                        <font>
+                            <Font name="System Bold" size="22.0"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="subtitleLabel" text="Push yourself to read more!"
+                           style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12;">
+                    </Label>
+                </VBox>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+
+            <Button fx:id="backButton"
+                    text="☰ Menu"
+                    onAction="#onBackClick"
+                    style="-fx-background-color: rgba(255, 255, 255, 0.2);
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-border-color: rgba(255, 255, 255, 0.3);
+                           -fx-border-width: 1.5;
+                           -fx-border-radius: 5;
+                           -fx-background-radius: 5;
+                           -fx-padding: 8 16;"
+                    prefHeight="35">
+            </Button>
+        </HBox>
+    </top>
+
+
+    <center>
+        <VBox spacing="20.0" style="-fx-padding: 25;">
+
+            <!-- Tabs for Challenge Types -->
+            <TabPane fx:id="challengeTabPane" VBox.vgrow="ALWAYS"
+                     style="-fx-background-color: transparent;">
+
+
+                <Tab text="🎉 Community Challenges" closable="false">
+                    <VBox spacing="15" style="-fx-padding: 15;">
+
+
+                        <Label text="Join community challenges and earn badges! Complete reading goals to unlock achievements."
+                               style="-fx-text-fill: #666; -fx-font-size: 13;"
+                               wrapText="true"/>
+
+
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                    style="-fx-background-color: transparent; -fx-background: transparent;">
+                            <VBox fx:id="appChallengesContainer" spacing="15" style="-fx-padding: 5;">
+
+                                <Label text="Loading challenges..." style="-fx-text-fill: #999;"/>
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+                </Tab>
+
+
+                <Tab text="📝 My Personal Goals" closable="false">
+                    <VBox spacing="15" style="-fx-padding: 15;">
+
+                        <!-- Create New Challenge Button -->
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Button fx:id="createChallengeButton"
+                                    text="➕ Create New Challenge"
+                                    onAction="#onCreatePersonalChallenge"
+                                    style="-fx-background-color: linear-gradient(to right, #ff9664, #ff6496);
+                                           -fx-text-fill: white;
+                                           -fx-font-weight: bold;
+                                           -fx-background-radius: 20;
+                                           -fx-padding: 10 20;
+                                           -fx-cursor: hand;">
+                            </Button>
+                            <Label text="Set your own reading goals and track your progress!"
+                                   style="-fx-text-fill: #888; -fx-font-style: italic;"/>
+                        </HBox>
+
+                        <Separator/>
+
+
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                    style="-fx-background-color: transparent; -fx-background: transparent;">
+                            <VBox fx:id="personalChallengesContainer" spacing="15" style="-fx-padding: 5;">
+
+                                <Label text="No personal challenges yet. Create one!" style="-fx-text-fill: #999;"/>
+                            </VBox>
+                        </ScrollPane>
+                    </VBox>
+                </Tab>
+
+
+                <Tab text="🏅 My Badges" closable="false">
+                    <VBox spacing="15" style="-fx-padding: 15;">
+
+                        <HBox spacing="30" alignment="CENTER"
+                              style="-fx-padding: 20; -fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 15;">
+
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label fx:id="totalBadgesLabel" text="0"
+                                       style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #ff9664;"/>
+                                <Label text="Badges Earned" style="-fx-text-fill: #666;"/>
+                            </VBox>
+
+                            <Separator orientation="VERTICAL"/>
+
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label fx:id="completedChallengesLabel" text="0"
+                                       style="-fx-font-size: 36; -fx-font-weight: bold; -fx-text-fill: #ff6496;"/>
+                                <Label text="Challenges Completed" style="-fx-text-fill: #666;"/>
+                            </VBox>
+                        </HBox>
+
+                        <Label text="Your Achievement Collection"
+                               style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #444;"/>
+
+
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                                    style="-fx-background-color: transparent; -fx-background: transparent;">
+                            <FlowPane fx:id="badgesContainer" hgap="15" vgap="15"
+                                      style="-fx-padding: 10;">
+                                <Label text="Complete challenges to earn badges!" style="-fx-text-fill: #999;"/>
+                            </FlowPane>
+                        </ScrollPane>
+                    </VBox>
+                </Tab>
+
+            </TabPane>
+
+        </VBox>
+    </center>
+
+</BorderPane>

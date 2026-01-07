@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.andrei.sample_project.ProfileController"
+            prefHeight="750.0" prefWidth="1000.0"
+            style="-fx-background-color: linear-gradient(to bottom right, #e6f0ff, #f0e6ff);">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20.0"
+              style="-fx-background-color: linear-gradient(to right, rgba(100, 130, 255, 0.9), rgba(150, 100, 255, 0.9));"
+              prefHeight="70.0">
+
+            <effect>
+                <DropShadow radius="5" color="rgba(100, 130, 255, 0.3)" offsetX="0" offsetY="2"/>
+            </effect>
+
+            <padding>
+                <Insets left="30.0" right="30.0"/>
+            </padding>
+
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label text="👤" style="-fx-font-size: 28;"/>
+                <VBox spacing="2">
+                    <Label fx:id="profileTitleLabel" text="My Profile"
+                           style="-fx-text-fill: white; -fx-font-weight: bold;">
+                        <font>
+                            <Font name="System Bold" size="22.0"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="memberSinceLabel" text="Member since 2024"
+                           style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12;">
+                    </Label>
+                </VBox>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="backButton"
+                    text="☰ Menu"
+                    onAction="#onBackClick"
+                    style="-fx-background-color: rgba(255, 255, 255, 0.2);
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-border-color: rgba(255, 255, 255, 0.3);
+                           -fx-border-width: 1.5;
+                           -fx-border-radius: 5;
+                           -fx-background-radius: 5;
+                           -fx-padding: 8 16;"
+                    prefHeight="35">
+            </Button>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox spacing="25" style="-fx-padding: 30;">
+
+                <HBox spacing="30" alignment="CENTER_LEFT"
+                      style="-fx-padding: 25; -fx-background-color: white; -fx-background-radius: 20;">
+                    <effect>
+                        <DropShadow radius="10" color="rgba(0,0,0,0.1)" offsetX="0" offsetY="4"/>
+                    </effect>
+
+                    <VBox alignment="CENTER" spacing="10">
+                        <StackPane>
+                            <Circle radius="50" style="-fx-fill: linear-gradient(to bottom, #6482ff, #9664ff);"/>
+                            <Label fx:id="profileInitialsLabel" text="U"
+                                   style="-fx-text-fill: white; -fx-font-size: 36; -fx-font-weight: bold;"/>
+                        </StackPane>
+                        <Button text="Edit Profile" onAction="#onEditProfile"
+                                style="-fx-background-color: transparent; -fx-text-fill: #6482ff;
+                                       -fx-font-size: 11; -fx-cursor: hand;"/>
+                    </VBox>
+
+                    <!-- User Info -->
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label fx:id="fullNameLabel" text="User Name"
+                               style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label fx:id="usernameLabel" text="username"
+                               style="-fx-font-size: 14; -fx-text-fill: #6482ff;"/>
+                        <Label fx:id="emailLabel" text="email@example.com"
+                               style="-fx-font-size: 13; -fx-text-fill: #888;"/>
+                        <Label fx:id="bioLabel" text="Book lover and avid reader"
+                               style="-fx-font-size: 13; -fx-text-fill: #666; -fx-font-style: italic;"
+                               wrapText="true"/>
+                    </VBox>
+
+                    <VBox spacing="15" alignment="CENTER">
+                        <HBox spacing="20">
+                            <VBox alignment="CENTER" spacing="2">
+                                <Label fx:id="followersCountLabel" text="0"
+                                       style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #6482ff;"/>
+                                <Label text="Followers" style="-fx-font-size: 11; -fx-text-fill: #888;"/>
+                            </VBox>
+                            <VBox alignment="CENTER" spacing="2">
+                                <Label fx:id="followingCountLabel" text="0"
+                                       style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #9664ff;"/>
+                                <Label text="Following" style="-fx-font-size: 11; -fx-text-fill: #888;"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="15">
+                    <Label text="📊 Reading Statistics"
+                           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #444;"/>
+
+                    <HBox spacing="20">
+                        <!-- Books Completed -->
+                        <VBox alignment="CENTER" spacing="8" HBox.hgrow="ALWAYS"
+                              style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 15;">
+                            <Label text="📚" style="-fx-font-size: 24;"/>
+                            <Label fx:id="booksCompletedLabel" text="0"
+                                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #4CAF50;"/>
+                            <Label text="Books Completed" style="-fx-text-fill: #666;"/>
+                        </VBox>
+
+                        <!-- Pages Read -->
+                        <VBox alignment="CENTER" spacing="8" HBox.hgrow="ALWAYS"
+                              style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 15;">
+                            <Label text="📖" style="-fx-font-size: 24;"/>
+                            <Label fx:id="pagesReadLabel" text="0"
+                                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #2196F3;"/>
+                            <Label text="Pages Read" style="-fx-text-fill: #666;"/>
+                        </VBox>
+
+                        <!-- Reviews Written -->
+                        <VBox alignment="CENTER" spacing="8" HBox.hgrow="ALWAYS"
+                              style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 15;">
+                            <Label text="⭐" style="-fx-font-size: 24;"/>
+                            <Label fx:id="reviewsWrittenLabel" text="0"
+                                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #FF9800;"/>
+                            <Label text="Reviews Written" style="-fx-text-fill: #666;"/>
+                        </VBox>
+
+                        <!-- Badges Earned -->
+                        <VBox alignment="CENTER" spacing="8" HBox.hgrow="ALWAYS"
+                              style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 15;">
+                            <Label text="🏆" style="-fx-font-size: 24;"/>
+                            <Label fx:id="badgesEarnedLabel" text="0"
+                                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #9C27B0;"/>
+                            <Label text="Badges Earned" style="-fx-text-fill: #666;"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+
+                <VBox spacing="15">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="❤ Favorite Books"
+                               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #444;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="View All Favorites" onAction="#onViewAllFavorites"
+                                style="-fx-background-color: transparent; -fx-text-fill: #6482ff;
+                                       -fx-font-size: 12; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <ScrollPane fitToHeight="true" prefHeight="180"
+                                style="-fx-background-color: transparent; -fx-background: transparent;">
+                        <HBox fx:id="favoriteBooksContainer" spacing="15" style="-fx-padding: 5;">
+                            <!-- Favorite book cards will be added here dynamically -->
+                            <Label text="No favorite books yet. Add some by clicking ❤️ on books!"
+                                   style="-fx-text-fill: #9664ff; -fx-padding: 20;"/>
+                        </HBox>
+                    </ScrollPane>
+                </VBox>
+
+                <VBox spacing="15">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="📝 My Recent Reviews"
+                               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #444;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="View All Reviews" onAction="#onViewAllReviews"
+                                style="-fx-background-color: transparent; -fx-text-fill: #6482ff;
+                                       -fx-font-size: 12; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <VBox fx:id="recentReviewsContainer" spacing="10"
+                          style="-fx-padding: 15; -fx-background-color: #f0e6ff; -fx-background-radius: 15;">
+
+                        <Label text="No reviews yet. Rate and review books you've read!"
+                               style="-fx-text-fill: #5a4a6a; -fx-font-size: 14;"/>
+                    </VBox>
+                </VBox>
+
+                <VBox spacing="15">
+                    <HBox alignment="CENTER_LEFT" spacing="15">
+                        <Label text="🏅 Badge Showcase"
+                               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #6482ff;"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button text="View All Badges" onAction="#onViewAllBadges"
+                                style="-fx-background-color: transparent; -fx-text-fill: #6482ff;
+                                       -fx-font-size: 12; -fx-cursor: hand;"/>
+                    </HBox>
+
+                    <FlowPane fx:id="badgesShowcaseContainer" hgap="15" vgap="15"
+                              style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 15;">
+                        <!-- Badges will be added here dynamically -->
+                        <Label text="Complete challenges to earn badges!"
+                               style="-fx-text-fill: #999;"/>
+                    </FlowPane>
+                </VBox>
+
+                <HBox spacing="15" alignment="CENTER">
+                    <Button text="🏆 View Challenges" onAction="#onViewChallenges"
+                            style="-fx-background-color: linear-gradient(to right, #ff9664, #ff6496);
+                                   -fx-text-fill: white; -fx-font-weight: bold;
+                                   -fx-background-radius: 20; -fx-padding: 12 25; -fx-cursor: hand;"/>
+
+                    <Button text="📊 Detailed Stats" onAction="#onViewDetailedStats"
+                            style="-fx-background-color: linear-gradient(to right, #6482ff, #9664ff);
+                                   -fx-text-fill: white; -fx-font-weight: bold;
+                                   -fx-background-radius: 20; -fx-padding: 12 25; -fx-cursor: hand;"/>
+
+                    <Button text="🚪 Logout" onAction="#onLogout"
+                            style="-fx-background-color: #f0f0f0;
+                                   -fx-text-fill: #666; -fx-font-weight: bold;
+                                   -fx-background-radius: 20; -fx-padding: 12 25; -fx-cursor: hand;"/>
+                </HBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

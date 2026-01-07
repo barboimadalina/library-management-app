@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.andrei.sample_project.UserProfileController"
+            prefHeight="700.0" prefWidth="900.0"
+            style="-fx-background-color: linear-gradient(to bottom right, #f5f7fa, #e4e8f0);">
+
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15"
+              style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-padding: 15 25;">
+
+
+            <Button fx:id="menuButton" text="☰ Menu" onAction="#onMenuClick"
+                    style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white;
+                           -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 8 15;"/>
+
+            <VBox spacing="2">
+                <Label fx:id="profileTitleLabel" text="User Profile"
+                       style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;"/>
+                <Label fx:id="privacyLabel" text="🌍 Public Account"
+                       style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 11;"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- Follow Button -->
+            <Button fx:id="followButton" text="➕ Follow" onAction="#onFollowClick"
+                    style="-fx-background-color: white; -fx-text-fill: #667eea;
+                           -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 10 25;"/>
+        </HBox>
+    </top>
+
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox spacing="20" style="-fx-padding: 25;">
+
+
+                <HBox spacing="25" alignment="CENTER_LEFT"
+                      style="-fx-padding: 25; -fx-background-color: white; -fx-background-radius: 15;">
+
+
+                    <StackPane>
+                        <Circle radius="45" style="-fx-fill: linear-gradient(to bottom, #667eea, #764ba2);"/>
+                        <Label fx:id="profileInitialsLabel" text="U"
+                               style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;"/>
+                    </StackPane>
+
+
+                    <VBox spacing="5" HBox.hgrow="ALWAYS">
+                        <Label fx:id="fullNameLabel" text="User Name"
+                               style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                        <Label fx:id="usernameLabel" text="username"
+                               style="-fx-font-size: 13; -fx-text-fill: #667eea;"/>
+                        <Label fx:id="bioLabel" text="No bio yet"
+                               style="-fx-font-size: 12; -fx-text-fill: #666; -fx-font-style: italic;"
+                               wrapText="true"/>
+                    </VBox>
+
+
+                    <HBox spacing="25">
+                        <VBox alignment="CENTER" spacing="3" onMouseClicked="#onViewFollowers" style="-fx-cursor: hand;">
+                            <Label fx:id="followersCountLabel" text="0"
+                                   style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #667eea;"/>
+                            <Label text="Followers" style="-fx-font-size: 11; -fx-text-fill: #888;"/>
+                        </VBox>
+                        <VBox alignment="CENTER" spacing="3" onMouseClicked="#onViewFollowing" style="-fx-cursor: hand;">
+                            <Label fx:id="followingCountLabel" text="0"
+                                   style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #764ba2;"/>
+                            <Label text="Following" style="-fx-font-size: 11; -fx-text-fill: #888;"/>
+                        </VBox>
+                    </HBox>
+                </HBox>
+
+
+                <VBox fx:id="publicContentBox" spacing="20">
+
+
+                    <HBox spacing="20">
+                        <VBox alignment="CENTER" spacing="5" HBox.hgrow="ALWAYS"
+                              style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 15;">
+                            <Label text="📚" style="-fx-font-size: 24;"/>
+                            <Label fx:id="booksCompletedLabel" text="0"
+                                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #27ae60;"/>
+                            <Label text="Books Completed" style="-fx-text-fill: #666;"/>
+                        </VBox>
+
+                        <VBox alignment="CENTER" spacing="5" HBox.hgrow="ALWAYS"
+                              style="-fx-padding: 20; -fx-background-color: white; -fx-background-radius: 15;">
+                            <Label text="⭐" style="-fx-font-size: 24;"/>
+                            <Label fx:id="reviewsWrittenLabel" text="0"
+                                   style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #f39c12;"/>
+                            <Label text="Reviews Written" style="-fx-text-fill: #666;"/>
+                        </VBox>
+                    </HBox>
+
+
+                    <VBox spacing="10">
+                        <Label text="❤ Favorite Books"
+                               style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #667eea;"/>
+                        <ScrollPane fitToHeight="true" prefHeight="150"
+                                    style="-fx-background-color: transparent; -fx-background: transparent;">
+                            <HBox fx:id="favoriteBooksContainer" spacing="15"/>
+                        </ScrollPane>
+                    </VBox>
+
+
+                    <VBox spacing="10">
+                        <Label text="📝 Recent Reviews"
+                               style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #667eea;"/>
+                        <VBox fx:id="recentReviewsContainer" spacing="10"
+                              style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 15;">
+                            <Label text="No reviews yet" style="-fx-text-fill: #999;"/>
+                        </VBox>
+                    </VBox>
+                </VBox>
+
+
+                <VBox fx:id="privateContentBox" spacing="15" alignment="CENTER" visible="false" managed="false"
+                      style="-fx-padding: 50; -fx-background-color: white; -fx-background-radius: 15;">
+
+                    <Label text="🔒" style="-fx-font-size: 48;"/>
+                    <Label text="This Account is Private"
+                           style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                    <Label text="Follow this account to see their books and reviews."
+                           style="-fx-font-size: 13; -fx-text-fill: #666;"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

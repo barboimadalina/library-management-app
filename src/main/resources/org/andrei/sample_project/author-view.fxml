@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.andrei.sample_project.AuthorController"
+            prefHeight="700.0" prefWidth="1000.0"
+            style="-fx-background-color: linear-gradient(to bottom right, #f5f7fa, #e8ecf3);">
+
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15"
+              style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-padding: 15 25;">
+
+
+            <Label text="✍️ Author Profile"
+                   style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="menuButton" text="☰ Menu" onAction="#onMenuClick"
+                    style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white;
+                           -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 8 15;"/>
+        </HBox>
+    </top>
+
+
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <VBox spacing="25" style="-fx-padding: 30;">
+
+
+                <HBox spacing="30" alignment="TOP_LEFT"
+                      style="-fx-padding: 25; -fx-background-color: white; -fx-background-radius: 15;">
+
+                    <VBox alignment="CENTER" spacing="10">
+
+                        <ImageView fx:id="authorImageView" fitWidth="150" fitHeight="180" preserveRatio="true"
+                                   style="-fx-background-radius: 10;">
+                        </ImageView>
+
+                        <StackPane fx:id="avatarStack" visible="false">
+                            <Circle radius="60" style="-fx-fill: linear-gradient(to bottom, #667eea, #764ba2);"/>
+                            <Label fx:id="avatarInitialsLabel" text="AA"
+                                   style="-fx-text-fill: white; -fx-font-size: 36; -fx-font-weight: bold;"/>
+                        </StackPane>
+                    </VBox>
+
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+
+                        <Label fx:id="authorNameLabel" text="Author Name"
+                               style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+
+                        <HBox spacing="20" alignment="CENTER_LEFT">
+                            <Label fx:id="nationalityLabel" text="🌍 Nationality"
+                                   style="-fx-text-fill: #667eea; -fx-font-size: 13;"/>
+                            <Label fx:id="lifespanLabel" text="📅 1965 - present"
+                                   style="-fx-text-fill: #888; -fx-font-size: 13;"/>
+                            <Label fx:id="bookCountLabel" text="5 books"
+                                   style="-fx-text-fill: #27ae60; -fx-font-weight: bold; -fx-font-size: 13;"/>
+                        </HBox>
+
+                        <Label fx:id="websiteLabel" text="🔗 website.com"
+                               style="-fx-text-fill: #3498db; -fx-font-size: 12;"/>
+
+                        <Separator/>
+                        <Label text="Biography" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #555;"/>
+                        <Label fx:id="biographyLabel" text="Author biography goes here..."
+                               style="-fx-text-fill: #666; -fx-font-size: 13;"
+                               wrapText="true"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="15">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="📚 Books by this Author"
+                               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #333;"/>
+                    </HBox>
+
+                    <FlowPane fx:id="booksContainer" hgap="20" vgap="20"
+                              style="-fx-padding: 15; -fx-background-color: rgba(255,255,255,0.5); -fx-background-radius: 15;">
+
+                    </FlowPane>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

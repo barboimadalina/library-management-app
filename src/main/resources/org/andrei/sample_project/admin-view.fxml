@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.andrei.sample_project.AdminController"
+            prefHeight="700.0" prefWidth="1100.0"
+            style="-fx-background-color: linear-gradient(to bottom right, #f5f0ff, #e6f0ff);">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20"
+              style="-fx-background-color: linear-gradient(to right, #6a5acd, #8b7fd4);"
+              prefHeight="60">
+            <padding>
+                <Insets left="20" right="20"/>
+            </padding>
+
+            <Label text="📚 Admin Dashboard" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="welcomeLabel" text="Welcome, Admin" style="-fx-text-fill: white; -fx-font-size: 14;"/>
+
+            <Button text="🔄 Refresh" onAction="#onRefresh"
+                    style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-background-radius: 15;"/>
+
+            <Button text="🚪 Logout" onAction="#onLogout"
+                    style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-background-radius: 15;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="10" style="-fx-padding: 15;">
+
+            <HBox alignment="CENTER" style="-fx-padding: 10; -fx-background-color: white; -fx-background-radius: 10;">
+                <Label fx:id="statsLabel" text="Loading stats..."
+                       style="-fx-font-size: 13; -fx-text-fill: #666;"/>
+            </HBox>
+
+            <TabPane VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
+
+                <Tab text="👥 Users" closable="false">
+                    <VBox spacing="10" style="-fx-padding: 15;">
+                        <Label text="User Management" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                        <!-- Search and View Profile -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <TextField fx:id="userSearchField" promptText="Search users..." prefWidth="250"/>
+                            <Button text="🔍 Search" onAction="#onSearchUsers"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="👁 View Profile" onAction="#onViewUserProfile"
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                        </HBox>
+
+                        <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="userIdColumn" text="ID" prefWidth="50"/>
+                                <TableColumn fx:id="usernameColumn" text="Username" prefWidth="120"/>
+                                <TableColumn fx:id="emailColumn" text="Email" prefWidth="200"/>
+                                <TableColumn fx:id="fullNameColumn" text="Full Name" prefWidth="180"/>
+                                <TableColumn fx:id="joinDateColumn" text="Joined" prefWidth="100"/>
+                                <TableColumn fx:id="booksReadColumn" text="Books Read" prefWidth="80"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+
+                <Tab text="📖 Books" closable="false">
+                    <HBox spacing="15" style="-fx-padding: 15;">
+
+                        <VBox spacing="10" HBox.hgrow="ALWAYS">
+                            <Label text="All Books" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <TextField fx:id="bookSearchField" promptText="Search books..." prefWidth="200"/>
+                                <ComboBox fx:id="bookSortCombo" promptText="Sort by" prefWidth="150"/>
+                                <Button text="🔍 Apply" onAction="#onFilterBooks"/>
+                            </HBox>
+
+                            <TableView fx:id="booksTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="coverColumn" text="Cover" prefWidth="60"/>
+                                    <TableColumn fx:id="bookIdColumn" text="ID" prefWidth="50"/>
+                                    <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
+                                    <TableColumn fx:id="authorColumn" text="Author" prefWidth="150"/>
+                                    <TableColumn fx:id="genreColumn" text="Genre" prefWidth="100"/>
+                                    <TableColumn fx:id="yearColumn" text="Year" prefWidth="70"/>
+                                    <TableColumn fx:id="ratingColumn" text="Rating" prefWidth="70"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                        <VBox spacing="10" prefWidth="300"
+                              style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
+                            <Label text="Add / Edit Book" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
+                            <TextField fx:id="titleField" promptText="Title *"/>
+                            <HBox spacing="10">
+                                <TextField fx:id="authorIdField" promptText="Author ID *" HBox.hgrow="ALWAYS"/>
+                                <Button text="📋 Select" onAction="#onSelectAuthor" prefWidth="80"/>
+                            </HBox>
+                            <TextField fx:id="genreField" promptText="Genre"/>
+                            <TextField fx:id="yearField" promptText="Publication Year"/>
+                            <TextField fx:id="pagesField" promptText="Page Count"/>
+                            <TextArea fx:id="descriptionArea" promptText="Description..." prefRowCount="3"/>
+
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Button fx:id="uploadImageButton" text="📷 Upload Cover" onAction="#onUploadImage"/>
+                                <Button text="❌ Clear" onAction="#onClearImage"/>
+                            </HBox>
+                            <Label fx:id="coverPathLabel" text="No image selected" style="-fx-text-fill: gray; -fx-font-size: 11;"/>
+                            <ImageView fx:id="coverPreview" fitWidth="80" preserveRatio="true"/>
+
+                            <HBox spacing="10">
+                                <Button text="➕ Add" onAction="#onAddBook"
+                                        style="-fx-background-color: #4CAF50; -fx-text-fill: white;" HBox.hgrow="ALWAYS"/>
+                                <Button text="✏Update" onAction="#onUpdateBook"
+                                        style="-fx-background-color: #2196F3; -fx-text-fill: white;" HBox.hgrow="ALWAYS"/>
+                            </HBox>
+                            <Button text="🗑Delete" onAction="#onDeleteBook"
+                                    style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                        </VBox>
+                    </HBox>
+                </Tab>
+
+                <Tab text="✍Authors" closable="false">
+                    <HBox spacing="15" style="-fx-padding: 15;">
+                        <!-- Authors Table -->
+                        <VBox spacing="10" HBox.hgrow="ALWAYS">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="All Authors" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <TextField fx:id="authorSearchField" promptText="Search authors..." prefWidth="200"/>
+                                <Button text="🔍 Search" onAction="#onSearchAuthors"/>
+                                <Button text="👁View/Edit" onAction="#onViewEditAuthor"
+                                        style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                            </HBox>
+
+                            <TableView fx:id="authorsTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="authorIdColumn" text="ID" prefWidth="50"/>
+                                    <TableColumn fx:id="authorNameColumn" text="Name" prefWidth="200"/>
+                                    <TableColumn fx:id="authorNationalityColumn" text="Nationality" prefWidth="120"/>
+                                    <TableColumn fx:id="authorBirthDateColumn" text="Birth Date" prefWidth="120"/>
+                                    <TableColumn fx:id="authorBookCountColumn" text="Books" prefWidth="70"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                        <VBox spacing="10" prefWidth="280"
+                              style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
+                            <Label text="Add / Edit Author" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
+                            <TextField fx:id="authorNameField" promptText="Author Name *"/>
+                            <TextArea fx:id="authorBioArea" promptText="Biography..." prefRowCount="3"/>
+                            <DatePicker fx:id="authorBirthDatePicker" promptText="Birth Date"/>
+                            <TextField fx:id="authorNationalityField" promptText="Nationality"/>
+                            <TextField fx:id="authorWebsiteField" promptText="Website URL"/>
+
+                            <HBox spacing="10">
+                                <Button text="➕ Add" onAction="#onAddAuthor"
+                                        style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                                <Button text="✏ Update" onAction="#onUpdateAuthor"
+                                        style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                                <Button text="🗑Delete" onAction="#onDeleteAuthor"
+                                        style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                </Tab>
+
+                <Tab text="⭐ Reviews" closable="false">
+                    <VBox spacing="15" style="-fx-padding: 15;">
+                        <!-- Header with filter -->
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="Review Management" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Label text="Filter:"/>
+                            <ComboBox fx:id="reviewFilterCombo" prefWidth="120"/>
+
+                            <Label text="Sort:"/>
+                            <ComboBox fx:id="reviewSortCombo" prefWidth="120"/>
+
+                            <Button text="Apply" onAction="#onFilterReviews"/>
+                        </HBox>
+
+
+                        <Label fx:id="reviewStatsLabel" text="Loading review stats..."
+                               style="-fx-text-fill: #666; -fx-font-style: italic;"/>
+
+                        <TableView fx:id="reviewsTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="reviewIdColumn" text="ID" prefWidth="50"/>
+                                <TableColumn fx:id="reviewBookColumn" text="Book" prefWidth="200"/>
+                                <TableColumn fx:id="reviewUserColumn" text="User" prefWidth="150"/>
+                                <TableColumn fx:id="reviewRatingColumn" text="Rating" prefWidth="100"/>
+                                <TableColumn fx:id="reviewTextColumn" text="Comment" prefWidth="250"/>
+                                <TableColumn fx:id="reviewDateColumn" text="Date" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <Button text="👁 View" onAction="#onViewReview"
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                            <Button text="🗑 Delete" onAction="#onDeleteReview"
+                                    style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                        </HBox>
+                    </VBox>
+                </Tab>
+
+                <Tab text="🏆 Challenges" closable="false">
+                    <VBox spacing="15" style="-fx-padding: 15;">
+                        <!-- Header -->
+                        <HBox spacing="15" alignment="CENTER_LEFT">
+                            <Label text="App Challenges" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Button text="➕ Create Challenge" onAction="#onAddChallenge"
+                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                            <Button text="✏ Edit" onAction="#onEditChallenge"
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                            <Button text="👁 View Details" onAction="#onViewChallenge"
+                                    style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
+                            <Button text="🗑 Delete" onAction="#onDeleteChallenge"
+                                    style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                        </HBox>
+
+                        <Label text="Create and manage reading challenges for all users"
+                               style="-fx-text-fill: #666; -fx-font-style: italic;"/>
+
+
+                        <TableView fx:id="challengesTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="challengeIdColumn" text="ID" prefWidth="50"/>
+                                <TableColumn fx:id="challengeTitleColumn" text="Title" prefWidth="250"/>
+                                <TableColumn fx:id="challengeTypeColumn" text="Type" prefWidth="100"/>
+                                <TableColumn fx:id="challengeTargetColumn" text="Target" prefWidth="70"/>
+                                <TableColumn fx:id="challengeDatesColumn" text="Date Range" prefWidth="200"/>
+                                <TableColumn fx:id="challengeParticipantsColumn" text="Participants" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </Tab>
+
+                <Tab text="🚀 Coming Soon" closable="false">
+                    <VBox spacing="15" style="-fx-padding: 15;">
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Label text="Upcoming Book Releases" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="➕ Add Announcement" onAction="#onAddComingSoon"
+                                    style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                        </HBox>
+
+                        <Label text="Manage upcoming book releases and announcements"
+                               style="-fx-text-fill: #666; -fx-font-style: italic;"/>
+
+                        <TableView fx:id="comingSoonTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="csIdColumn" text="ID" prefWidth="50"/>
+                                <TableColumn fx:id="csTitleColumn" text="Title" prefWidth="200"/>
+                                <TableColumn fx:id="csAuthorColumn" text="Author" prefWidth="150"/>
+                                <TableColumn fx:id="csGenreColumn" text="Genre" prefWidth="100"/>
+                                <TableColumn fx:id="csReleaseDateColumn" text="Release Date" prefWidth="100"/>
+                                <TableColumn fx:id="csStatusColumn" text="Status" prefWidth="100"/>
+                            </columns>
+                        </TableView>
+
+                        <HBox spacing="10" alignment="CENTER_RIGHT">
+                            <Button text="✏ Edit" onAction="#onEditComingSoon"
+                                    style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                            <Button text="🗑 Delete" onAction="#onDeleteComingSoon"
+                                    style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+                        </HBox>
+                    </VBox>
+                </Tab>
+
+            </TabPane>
+        </VBox>
+    </center>
+
+</BorderPane>
