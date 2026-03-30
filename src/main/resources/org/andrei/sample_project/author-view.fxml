@@ -18,7 +18,7 @@
               style="-fx-background-color: linear-gradient(to right, #667eea, #764ba2); -fx-padding: 15 25;">
 
 
-            <Label text="✍️ Author Profile"
+            <Label text="✍ Author Profile"
                    style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;"/>
 
             <Region HBox.hgrow="ALWAYS"/>

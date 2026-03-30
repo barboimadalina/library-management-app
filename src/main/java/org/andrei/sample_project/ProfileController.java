@@ -11,7 +11,7 @@ import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.collections.FXCollections;
-
+import javafx.stage.Modality;
 import org.andrei.sample_project.BookDialog;
 import org.andrei.sample_project.FavoritesDialog;
 import org.andrei.sample_project.repository.*;
@@ -520,26 +520,40 @@ public class ProfileController {
     }
 
     private void showUserListDialog(String title, List<User> users) {
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle(title);
-        dialog.setHeaderText("You have " + users.size() + " " + title.toLowerCase());
+        try {
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setTitle(title);
+            dialog.setHeaderText("You have " + users.size() + " " + title.toLowerCase());
 
-        VBox content = new VBox(10);
-        content.setPadding(new Insets(10));
+            VBox content = new VBox(10);
+            content.setPadding(new Insets(10));
 
-        for (User user : users) {
-            HBox userCard = createUserCard(user);
-            content.getChildren().add(userCard);
+            for (User user : users) {
+                HBox userCard = createUserCard(user);
+                content.getChildren().add(userCard);
+            }
+
+            ScrollPane scroll = new ScrollPane(content);
+            scroll.setPrefHeight(400);
+            scroll.setPrefWidth(350);
+            scroll.setFitToWidth(true);
+
+            dialog.getDialogPane().setContent(scroll);
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+            // Set owner to maintain proper window hierarchy
+            Stage currentStage = (Stage) backButton.getScene().getWindow();
+            dialog.initOwner(currentStage);
+            dialog.initModality(Modality.WINDOW_MODAL);
+
+            dialog.showAndWait();
+
+        } catch (Exception e) {
+            System.out.println(">>> ERROR showing " + title + " dialog: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        ScrollPane scroll = new ScrollPane(content);
-        scroll.setPrefHeight(400);
-        scroll.setPrefWidth(350);
-
-        dialog.getDialogPane().setContent(scroll);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        dialog.showAndWait();
     }
+
 
     private HBox createUserCard(User user) {
         HBox card = new HBox(10);
@@ -570,10 +584,18 @@ public class ProfileController {
             UserProfileController controller = loader.getController();
             controller.setUsers(currentUser, user);
 
-            Stage stage = (Stage) backButton.getScene().getWindow();
-            stage.setScene(new Scene(root, 900, 700));
+            // Get the current stage from any node that's in the main scene
+            Stage currentStage = (Stage) backButton.getScene().getWindow();
+
+            Stage newStage = new Stage();
+            newStage.setScene(new Scene(root, 900, 700));
+            newStage.setTitle(user.getFullName() + "'s Profile");
+            newStage.initOwner(currentStage); // Set owner to maintain window hierarchy
+            newStage.show();
+
         } catch (IOException e) {
-            System.out.println(">>> Error: " + e.getMessage());
+            System.out.println(">>> ERROR navigating to user profile: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

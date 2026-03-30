@@ -4,9 +4,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.andrei.sample_project.User;
-import org.andrei.sample_project.UserProfileController;
 import org.andrei.sample_project.repository.FollowRepository;
 
 import java.util.List;
@@ -19,35 +18,37 @@ public class FollowRequestsDialog {
 
     private final User currentUser;
     private final FollowRepository followRepository;
+    private DialogPane dialogPane;
+    private Stage ownerStage;  // Add this to store the owner stage
 
-    public FollowRequestsDialog(User currentUser) {
+    public FollowRequestsDialog(User currentUser, Stage ownerStage) {
         this.currentUser = currentUser;
         this.followRepository = new FollowRepository();
+        this.ownerStage = ownerStage;
     }
 
     public void show() {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("📨 Follow Activity");
 
+        // Initialize with owner stage to maintain window hierarchy
+        dialog.initOwner(ownerStage);
+        dialog.initModality(Modality.WINDOW_MODAL);
 
-        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane = dialog.getDialogPane();
         dialogPane.getButtonTypes().add(ButtonType.CLOSE);
-
 
         VBox mainContainer = new VBox(15);
         mainContainer.setPadding(new Insets(20));
         mainContainer.setMinWidth(500);
         mainContainer.setMinHeight(400);
 
-
         Label headerLabel = new Label("📨 Follow Activity");
         headerLabel.setStyle("-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #667eea;");
-
 
         boolean isPrivate = currentUser.isPrivate();
         Label privacyLabel = new Label(isPrivate ? "🔒 Private Account" : "🌍 Public Account");
         privacyLabel.setStyle("-fx-font-size: 12; -fx-text-fill: " + (isPrivate ? "#e74c3c" : "#27ae60") + ";");
-
 
         String description = isPrivate
                 ? "People who want to follow you. Accept or decline requests."
@@ -55,7 +56,6 @@ public class FollowRequestsDialog {
         Label descriptionLabel = new Label(description);
         descriptionLabel.setStyle("-fx-font-size: 13; -fx-text-fill: #666;");
         descriptionLabel.setWrapText(true);
-
 
         List<User> users = followRepository.getRecentFollowActivity(currentUser.getUserId());
 
@@ -98,7 +98,6 @@ public class FollowRequestsDialog {
             statsBox.getChildren().addAll(followersBox, followingBox);
         }
 
-
         mainContainer.getChildren().addAll(
                 headerLabel,
                 privacyLabel,
@@ -131,7 +130,7 @@ public class FollowRequestsDialog {
 
         avatarPane.getChildren().add(initialsLabel);
 
-        //user info
+        // User info
         VBox infoBox = new VBox(2);
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
@@ -143,12 +142,11 @@ public class FollowRequestsDialog {
 
         infoBox.getChildren().addAll(nameLabel, usernameLabel);
 
-
         HBox actionBox = new HBox(8);
         actionBox.setAlignment(Pos.CENTER_RIGHT);
 
         if (isPrivateAccount) {
-            // for private accounts: Accept/Decline buttons
+            // For private accounts: Accept/Decline buttons
             Button acceptBtn = new Button("Accept");
             acceptBtn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white; " +
                     "-fx-font-size: 11; -fx-padding: 5 12; -fx-background-radius: 15;");
@@ -162,7 +160,7 @@ public class FollowRequestsDialog {
             actionBox.getChildren().addAll(declineBtn, acceptBtn);
 
         } else {
-            // for public accounts: Show follow status
+            // For public accounts: Show follow status
             Label statusLabel = new Label("Follows you");
             statusLabel.setStyle("-fx-text-fill: #27ae60; -fx-font-size: 11; -fx-font-weight: bold;");
             actionBox.getChildren().add(statusLabel);
@@ -170,7 +168,7 @@ public class FollowRequestsDialog {
 
         card.getChildren().addAll(avatarPane, infoBox, actionBox);
 
-
+        // Make card clickable to view profile
         card.setOnMouseClicked(e -> showUserProfile(user));
         card.setStyle(card.getStyle() + " -fx-cursor: hand;");
 
@@ -197,6 +195,9 @@ public class FollowRequestsDialog {
         confirm.setHeaderText("Accept " + requester.getFullName() + "?");
         confirm.setContentText("This user will be able to see your content.");
 
+        // Set owner to maintain window hierarchy
+        confirm.initOwner(ownerStage);
+
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 boolean success = followRepository.acceptFollowRequest(
@@ -222,6 +223,9 @@ public class FollowRequestsDialog {
         confirm.setHeaderText("Decline " + requester.getFullName() + "?");
         confirm.setContentText("This user will not be able to follow you.");
 
+        // Set owner to maintain window hierarchy
+        confirm.initOwner(ownerStage);
+
         confirm.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 boolean success = followRepository.rejectFollowRequest(
@@ -243,7 +247,13 @@ public class FollowRequestsDialog {
     private void showUserProfile(User user) {
         // Navigate to user profile
         try {
-            Stage stage = (Stage) new Label().getScene().getWindow();
+            // Create a new stage for the user profile
+            Stage profileStage = new Stage();
+            profileStage.setTitle(user.getFullName() + " - Profile");
+
+            // Set owner to maintain window hierarchy
+            profileStage.initOwner(ownerStage);
+            profileStage.initModality(Modality.WINDOW_MODAL);
 
             javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
                     getClass().getResource("user-profile-view.fxml")
@@ -253,11 +263,15 @@ public class FollowRequestsDialog {
             UserProfileController controller = loader.getController();
             controller.setUsers(currentUser, user);
 
-            stage.setScene(new javafx.scene.Scene(root, 900, 700));
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, 900, 700);
+            profileStage.setScene(scene);
+
+            profileStage.show();
 
         } catch (Exception e) {
             System.out.println(">>> ERROR showing user profile: " + e.getMessage());
-            showAlert("Navigation Error", "Could not load profile.");
+            e.printStackTrace();
+            showAlert("Navigation Error", "Could not load profile: " + e.getMessage());
         }
     }
 
@@ -266,6 +280,10 @@ public class FollowRequestsDialog {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
+        // Set owner to maintain window hierarchy
+        alert.initOwner(ownerStage);
+
         alert.showAndWait();
     }
 

@@ -355,10 +355,9 @@ public class AuthorRepository {
         book.setDescription(rs.getString("description"));
         book.setPublicationYear(rs.getInt("publication_year"));
         book.setPageCount(rs.getInt("page_count"));
-        book.setIsbn(rs.getString("isbn"));
         book.setAverageRating(rs.getDouble("average_rating"));
         book.setRatingCount(rs.getInt("rating_count"));
-        book.setCoverImage(rs.getString("cover_image"));
+        book.setCoverImage(rs.getString("cover_image_url"));
         return book;
     }
 }

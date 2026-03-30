@@ -58,36 +58,15 @@ public class ComingSoonRepository {
     }
 
     public List<ComingSoonBook> getUpcomingBooks() {
-        System.out.println(">>> getUpcomingBooks - Starting query...");
-
-        // SIMPLIFIED QUERY FIRST - Remove the status filter to see what's in the table
-        String sql = "SELECT * FROM coming_soon_books ORDER BY release_date ASC LIMIT 10";
-
-        System.out.println(">>> SQL Query: " + sql);
-
+        String sql = "SELECT * FROM coming_soon_books ORDER BY id DESC LIMIT 10";
         List<ComingSoonBook> books = new ArrayList<>();
 
-        try (Connection conn = ConnectionFactory.getConnection()) {
-            if (conn == null) {
-                System.out.println(">>> ERROR: No database connection!");
-                return books;
-            }
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
-            System.out.println(">>> Database connection OK");
-
-            try (PreparedStatement stmt = conn.prepareStatement(sql);
-                 ResultSet rs = stmt.executeQuery()) {
-
-                int count = 0;
-                while (rs.next()) {
-                    count++;
-                    ComingSoonBook book = extractComingSoonBookFromResultSet(rs);
-                    books.add(book);
-                    System.out.println(">>> Found book #" + count + ": " + book.getTitle() + " by " + book.getAuthor());
-                }
-
-                System.out.println(">>> Total found: " + count + " books");
-
+            while (rs.next()) {
+                books.add(extractComingSoonBookFromResultSet(rs));
             }
 
         } catch (SQLException e) {

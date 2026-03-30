@@ -486,8 +486,6 @@ public class BookRepository {
     }
 
     public void updateChallengesForCompletedBook(int userId, int bookId) {
-        System.out.println(">>> updateChallengesForCompletedBook: userId=" + userId + ", bookId=" + bookId);
-
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -501,24 +499,14 @@ public class BookRepository {
             stmt = conn.prepareStatement(bookSql);
             stmt.setInt(1, bookId);
             rs = stmt.executeQuery();
-
             if (rs.next()) {
                 bookGenre = rs.getString("genre");
-                System.out.println(">>>   Book genre found: " + bookGenre);
-            } else {
-                System.out.println(">>>   No book found with ID: " + bookId);
             }
             ConnectionFactory.close(rs);
             ConnectionFactory.close(stmt);
 
-            if (bookGenre == null) {
-                System.out.println(">>> Could not find book or genre");
-                return;
-            }
-
-
-            String challengeSql =
-                    "SELECT ac.challenge_id, ac.required_genre, ac.target, uac.current_progress " +
+            String appChallengeSql =
+                    "SELECT ac.challenge_id, ac.required_genre, ac.target " +
                             "FROM user_app_challenges uac " +
                             "JOIN app_challenges ac ON uac.challenge_id = ac.challenge_id " +
                             "WHERE ac.is_active = TRUE " +
@@ -527,45 +515,27 @@ public class BookRepository {
                             "AND ac.start_date <= CURRENT_DATE " +
                             "AND ac.end_date >= CURRENT_DATE";
 
-            stmt = conn.prepareStatement(challengeSql);
+            stmt = conn.prepareStatement(appChallengeSql);
             stmt.setInt(1, userId);
             rs = stmt.executeQuery();
-
-            int updatedChallenges = 0;
 
             while (rs.next()) {
                 int challengeId = rs.getInt("challenge_id");
                 String requiredGenre = rs.getString("required_genre");
                 int target = rs.getInt("target");
-                int currentProgress = rs.getInt("current_progress");
-
-                System.out.println(">>>   Checking challenge #" + challengeId +
-                        ", required genre: '" + requiredGenre + "'" +
-                        ", book genre: '" + bookGenre + "'" +
-                        ", current progress: " + currentProgress + "/" + target);
-
 
                 boolean genreMatches = false;
-
                 if (requiredGenre == null || requiredGenre.trim().isEmpty()) {
-
                     genreMatches = true;
-                    System.out.println(">>>     No genre requirement - book counts!");
                 } else if (bookGenre != null) {
-
                     String normalizedRequired = requiredGenre.trim().toLowerCase();
                     String normalizedBook = bookGenre.trim().toLowerCase();
-
-                    if (normalizedBook.equals(normalizedRequired) ||
-                            normalizedBook.contains(normalizedRequired) ||
-                            normalizedRequired.contains(normalizedBook)) {
+                    if (normalizedBook.contains(normalizedRequired) || normalizedRequired.contains(normalizedBook)) {
                         genreMatches = true;
-                        System.out.println(">>>     Genre matches!");
                     }
                 }
 
                 if (genreMatches) {
-
                     String updateSql =
                             "UPDATE user_app_challenges " +
                                     "SET current_progress = current_progress + 1 " +
@@ -575,103 +545,69 @@ public class BookRepository {
                     PreparedStatement updateStmt = conn.prepareStatement(updateSql);
                     updateStmt.setInt(1, userId);
                     updateStmt.setInt(2, challengeId);
-
                     ResultSet updateRs = updateStmt.executeQuery();
+
                     if (updateRs.next()) {
                         int newProgress = updateRs.getInt("current_progress");
-                        updatedChallenges++;
-
-                        System.out.println(">>>   Challenge #" + challengeId + " updated: " + newProgress + "/" + target);
-
-                        // Check if challenge is now complete
                         if (newProgress >= target) {
-                            String completeSql =
-                                    "UPDATE user_app_challenges " +
-                                            "SET completed = TRUE, completed_at = CURRENT_TIMESTAMP " +
-                                            "WHERE user_id = ? AND challenge_id = ?";
-
+                            String completeSql = "UPDATE user_app_challenges SET completed = TRUE, completed_at = CURRENT_TIMESTAMP WHERE user_id = ? AND challenge_id = ?";
                             PreparedStatement completeStmt = conn.prepareStatement(completeSql);
                             completeStmt.setInt(1, userId);
                             completeStmt.setInt(2, challengeId);
                             completeStmt.executeUpdate();
                             ConnectionFactory.close(completeStmt);
-
-                            System.out.println(">>>   ✅ Challenge #" + challengeId + " COMPLETED!");
                         }
                     }
                     ConnectionFactory.close(updateRs);
                     ConnectionFactory.close(updateStmt);
-                } else {
-                    System.out.println(">>>     Genre does NOT match - skipping");
                 }
             }
-
-            System.out.println(">>>   Updated " + updatedChallenges + " app challenges");
-
             ConnectionFactory.close(rs);
             ConnectionFactory.close(stmt);
 
             String personalSql =
-                    "UPDATE personal_challenges pc " +
-                            "SET books_completed = books_completed + 1 " +
-                            "WHERE pc.user_id = ? " +
-                            "AND pc.is_completed = FALSE " +
-                            "AND (pc.end_date IS NULL OR pc.end_date >= CURRENT_DATE) " +
-                            "RETURNING challenge_id";
+                    "SELECT challenge_id, target_books FROM personal_challenges " +
+                            "WHERE user_id = ? " +
+                            "AND is_completed = FALSE " +
+                            "AND start_date <= CURRENT_DATE " +
+                            "AND (end_date IS NULL OR end_date >= CURRENT_DATE)";
 
             stmt = conn.prepareStatement(personalSql);
             stmt.setInt(1, userId);
             rs = stmt.executeQuery();
 
-            List<Integer> updatedPersonalChallenges = new ArrayList<>();
-            while (rs.next()) {
-                updatedPersonalChallenges.add(rs.getInt("challenge_id"));
+            List<Integer> validChallengeIds = new ArrayList<>();
+            while(rs.next()) {
+                validChallengeIds.add(rs.getInt("challenge_id"));
             }
-
-            System.out.println(">>>   Updated " + updatedPersonalChallenges.size() + " personal challenges");
-
             ConnectionFactory.close(rs);
             ConnectionFactory.close(stmt);
 
-            if (!updatedPersonalChallenges.isEmpty()) {
-                String insertBookSql =
-                        "INSERT INTO personal_challenge_books (challenge_id, book_id) " +
-                                "VALUES (?, ?) " +
-                                "ON CONFLICT (challenge_id, book_id) DO NOTHING";
+            String insertLinkSql = "INSERT INTO personal_challenge_books (challenge_id, book_id) VALUES (?, ?) ON CONFLICT (challenge_id, book_id) DO NOTHING";
+            String incrementSql = "UPDATE personal_challenges SET books_completed = books_completed + 1 WHERE challenge_id = ?";
+            String checkCompleteSql = "UPDATE personal_challenges SET is_completed = TRUE WHERE challenge_id = ? AND books_completed >= target_books";
 
-                stmt = conn.prepareStatement(insertBookSql);
-                for (Integer challengeId : updatedPersonalChallenges) {
-                    stmt.setInt(1, challengeId);
-                    stmt.setInt(2, bookId);
-                    stmt.executeUpdate();
+            for (Integer cId : validChallengeIds) {
+                PreparedStatement insertStmt = conn.prepareStatement(insertLinkSql);
+                insertStmt.setInt(1, cId);
+                insertStmt.setInt(2, bookId);
+                int rows = insertStmt.executeUpdate();
+                ConnectionFactory.close(insertStmt);
+
+                if (rows > 0) {
+                    PreparedStatement incStmt = conn.prepareStatement(incrementSql);
+                    incStmt.setInt(1, cId);
+                    incStmt.executeUpdate();
+                    ConnectionFactory.close(incStmt);
+
+                    PreparedStatement compStmt = conn.prepareStatement(checkCompleteSql);
+                    compStmt.setInt(1, cId);
+                    compStmt.executeUpdate();
+                    ConnectionFactory.close(compStmt);
                 }
-                ConnectionFactory.close(stmt);
-            }
-
-            String checkCompleteSql =
-                    "UPDATE personal_challenges " +
-                            "SET is_completed = TRUE " +
-                            "WHERE user_id = ? " +
-                            "AND books_completed >= target_books " +
-                            "AND is_completed = FALSE " +
-                            "RETURNING challenge_id";
-
-            stmt = conn.prepareStatement(checkCompleteSql);
-            stmt.setInt(1, userId);
-            rs = stmt.executeQuery();
-
-            int completedPersonal = 0;
-            while (rs.next()) {
-                completedPersonal++;
-                System.out.println(">>>   ✅ Personal challenge #" + rs.getInt("challenge_id") + " COMPLETED!");
-            }
-
-            if (completedPersonal > 0) {
-                System.out.println(">>>   Completed " + completedPersonal + " personal challenges");
             }
 
         } catch (SQLException e) {
-            System.out.println(">>> ERROR in updateChallengesForCompletedBook: " + e.getMessage());
             e.printStackTrace();
         } finally {
             ConnectionFactory.close(rs);
@@ -736,7 +672,71 @@ public class BookRepository {
             ConnectionFactory.close(conn);
         }
     }
+    public boolean updateBook(Book book) {
+        String sql = "UPDATE books SET title = ?, author_id = ?, genre = ?, publication_year = ?, " +
+                "page_count = ?, description = ?, cover_image_url = ? WHERE book_id = ?";
 
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = ConnectionFactory.getConnection();
+            if (conn == null) {
+                System.out.println(">>> ERROR: Could not connect to database in updateBook");
+                return false;
+            }
+
+            stmt = conn.prepareStatement(sql);
+
+            stmt.setString(1, book.getTitle());
+            stmt.setInt(2, book.getAuthorId());
+
+            if (book.getGenre() != null && !book.getGenre().isEmpty()) {
+                stmt.setString(3, book.getGenre());
+            } else {
+                stmt.setNull(3, Types.VARCHAR);
+            }
+
+            if (book.getPublicationYear() > 0) {
+                stmt.setInt(4, book.getPublicationYear());
+            } else {
+                stmt.setNull(4, Types.INTEGER);
+            }
+
+            if (book.getPageCount() > 0) {
+                stmt.setInt(5, book.getPageCount());
+            } else {
+                stmt.setNull(5, Types.INTEGER);
+            }
+
+            if (book.getDescription() != null && !book.getDescription().isEmpty()) {
+                stmt.setString(6, book.getDescription());
+            } else {
+                stmt.setNull(6, Types.VARCHAR);
+            }
+
+            if (book.getCoverImage() != null && !book.getCoverImage().isEmpty()) {
+                stmt.setString(7, book.getCoverImage());
+            } else {
+                stmt.setNull(7, Types.VARCHAR);
+            }
+
+            stmt.setInt(8, book.getBookId());
+
+            int rows = stmt.executeUpdate();
+            System.out.println(">>> updateBook: Updated '" + book.getTitle() + "' (ID: " + book.getBookId() +
+                    ", rows affected: " + rows + ")");
+            return rows > 0;
+
+        } catch (SQLException e) {
+            System.out.println(">>> ERROR in updateBook: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        } finally {
+            ConnectionFactory.close(stmt);
+            ConnectionFactory.close(conn);
+        }
+    }
     public boolean deleteBook(int bookId) {
         String sql = "DELETE FROM books WHERE book_id = ?";
 
@@ -954,7 +954,7 @@ public class BookRepository {
 
 
         try {
-            book.setCoverImage(rs.getString("cover_image"));
+            book.setCoverImage(rs.getString("cover_image_url"));
         } catch (SQLException e) {
             //column doest exist
         }

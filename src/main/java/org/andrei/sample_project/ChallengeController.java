@@ -158,7 +158,7 @@ public class ChallengeController {
             inProgressLabel.setStyle("-fx-text-fill: #ff9664; -fx-font-weight: bold;");
             actions.getChildren().add(inProgressLabel);
         } else if (challenge.isUserCompleted()) {
-            Label completedLabel = new Label("✅ " + challenge.getBadgeDisplay() + " earned!");
+            Label completedLabel = new Label(  challenge.getBadgeDisplay() + " earned!");
             completedLabel.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold;");
             actions.getChildren().add(completedLabel);
         }
@@ -274,7 +274,7 @@ public class ChallengeController {
         actions.setAlignment(Pos.CENTER_RIGHT);
 
         if (!challenge.isCompleted()) {
-            Button deleteBtn = new Button("🗑️ Delete");
+            Button deleteBtn = new Button("🗑 Delete");
             deleteBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #dc3545; -fx-cursor: hand;");
             deleteBtn.setOnAction(e -> deletePersonalChallenge(challenge));
             actions.getChildren().add(deleteBtn);

@@ -186,7 +186,7 @@ public class MenuHelper {
 
     private static void showRequests(User user, Stage stage) {
         try {
-            FollowRequestsDialog dialog = new FollowRequestsDialog(user);
+            FollowRequestsDialog dialog = new FollowRequestsDialog(user, stage);
             dialog.show();
 
         } catch (Exception e) {

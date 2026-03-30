@@ -101,6 +101,9 @@ public class User {
         this.fullName = fullName;
     }
 
+    public int getBooksRead() {
+        return booksRead;
+    }
     public String getBio() {
         return bio;
     }

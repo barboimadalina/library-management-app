@@ -14,10 +14,6 @@ import java.util.List;
  */
 public class UserRepository {
 
-    // ==========================================
-    // AUTHENTICATION (WITH BCRYPT)
-    // ==========================================
-
     /**
      * Login method - called by LoginController
      */
@@ -52,26 +48,23 @@ public class UserRepository {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // Step 2: Get the stored BCrypt hash from database
                 String storedHash = rs.getString("password_hash");
                 System.out.println(">>> Found user, checking password...");
 
-                // Step 3: Verify the password using BCrypt
+
                 if (storedHash != null && BCrypt.checkpw(password, storedHash)) {
-                    // Step 4: Password is correct - create User object
                     User user = extractUserFromResultSet(rs);
                     System.out.println(">>> ✓ Authentication successful for: " + user.getUsername());
                     System.out.println(">>> Privacy setting: " + (user.isPrivate() ? "🔒 Private" : "🌍 Public"));
 
-                    // Step 5: Update last login time
-                    updateLastLogin(user.getUserId());
 
+                    updateLastLogin(user.getUserId());
                     return user;
                 } else {
-                    // Step 6: Password is wrong
+
                     System.out.println(">>> ✗ Password incorrect for: " + usernameOrEmail);
 
-                    // DEBUG: Try to see what's happening
+
                     if (storedHash == null) {
                         System.out.println(">>>   WARNING: storedHash is NULL!");
                     } else if (!storedHash.startsWith("$2a$")) {
@@ -181,10 +174,6 @@ public class UserRepository {
     public boolean register(String username, String email, String password, String fullName) {
         return register(username, email, password, fullName, false);
     }
-
-    // ==========================================
-    // GET OPERATIONS
-    // ==========================================
 
     /**
      * Gets a user by ID
@@ -347,10 +336,6 @@ public class UserRepository {
         return users;
     }
 
-    // ==========================================
-    // FOLLOWER COUNTS
-    // ==========================================
-
     /**
      * Gets follower count for a user
      */
@@ -479,9 +464,6 @@ public class UserRepository {
         return 0;
     }
 
-    // ==========================================
-    // UPDATE OPERATIONS
-    // ==========================================
 
     /**
      * Updates user's last login timestamp
@@ -774,9 +756,6 @@ public class UserRepository {
         }
     }
 
-    // ==========================================
-    // DELETE OPERATIONS
-    // ==========================================
 
     /**
      * Deletes a user (admin only)
@@ -807,9 +786,6 @@ public class UserRepository {
         return false;
     }
 
-    // ==========================================
-    // HELPER METHODS
-    // ==========================================
 
     private User extractUserFromResultSet(ResultSet rs) throws SQLException {
         User user = new User();
@@ -819,49 +795,48 @@ public class UserRepository {
         user.setPasswordHash(rs.getString("password_hash"));
         user.setFullName(rs.getString("full_name"));
 
-        // Get bio (may be null)
+
         try {
             user.setBio(rs.getString("bio"));
         } catch (SQLException e) {
             user.setBio(null);
         }
 
-        // Check for admin status - try multiple column names
+
         boolean isAdmin = false;
 
-        // Try 'is_admin' column first (boolean)
+
         try {
             isAdmin = rs.getBoolean("is_admin");
         } catch (SQLException e1) {
-            // Try 'role' column (string)
+
             try {
                 String role = rs.getString("role");
                 isAdmin = "ADMIN".equalsIgnoreCase(role);
             } catch (SQLException e2) {
-                // No admin column found - default to false
+
                 isAdmin = false;
             }
         }
 
         user.setAdmin(isAdmin);
 
-        // Get privacy setting - may not exist in old schema
         try {
             boolean isPrivate = rs.getBoolean("is_private");
             user.setPrivate(isPrivate);
         } catch (SQLException e) {
-            // Column doesn't exist - default to public
+
             user.setPrivate(false);
         }
 
-        // New columns - may not exist in old schema
+
         try {
             user.setProfilePicture(rs.getString("profile_picture"));
         } catch (SQLException e) {
             // Column doesn't exist
         }
 
-        // Timestamps
+
         try {
             Timestamp createdAt = rs.getTimestamp("created_at");
             if (createdAt != null) {

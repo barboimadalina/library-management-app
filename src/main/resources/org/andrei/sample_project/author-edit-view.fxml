@@ -164,7 +164,7 @@
 
 
                     <HBox alignment="CENTER" spacing="10">
-                        <Button text="🗑️ Delete Author" onAction="#onDeleteClick"
+                        <Button text="🗑 Delete Author" onAction="#onDeleteClick"
                                 style="-fx-background-color: #c0392b; -fx-text-fill: white; -fx-font-weight: bold;
                                        -fx-padding: 10 20; -fx-font-size: 14;"/>
                     </HBox>

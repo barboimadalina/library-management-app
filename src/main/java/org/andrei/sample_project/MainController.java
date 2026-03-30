@@ -90,7 +90,7 @@ public class MainController {
         //setup search filter
         if (searchFilterCombo != null) {
             searchFilterCombo.setItems(FXCollections.observableArrayList(
-                    "🔍 All", "📚 Books", "✍️ Authors", "👤 Users"
+                    "🔍 All", "📚 Books", "✍ Authors", "👤 Users"
             ));
             searchFilterCombo.setValue("🔍 All");
         }
@@ -562,7 +562,7 @@ public class MainController {
         }
 
         if (!authors.isEmpty()) {
-            Tab authorsTab = new Tab("✍️ Authors (" + authors.size() + ")");
+            Tab authorsTab = new Tab("✍ Authors (" + authors.size() + ")");
             ListView<Author> authorsList = new ListView<>(FXCollections.observableArrayList(authors));
             authorsList.setCellFactory(lv -> createAuthorListCell());
             authorsList.setOnMouseClicked(e -> {
@@ -658,7 +658,7 @@ public class MainController {
         }
 
         Dialog<Author> dialog = new Dialog<>();
-        dialog.setTitle("✍️ Author Search Results");
+        dialog.setTitle("✍ Author Search Results");
         dialog.setHeaderText("Found " + authors.size() + " author(s)");
 
         ButtonType viewType = new ButtonType("View Author", ButtonBar.ButtonData.OK_DONE);
@@ -950,7 +950,7 @@ public class MainController {
     }
 
     public void showBookDetailsDialog(Book book) {
-        new BookDialog(currentUser).showBookDetails(book);
+        new BookDialog(currentUser).showBookDetails(book, null, this::refreshAllData);
     }
 
     private void showAddToListDialog(Book book) {
@@ -981,22 +981,33 @@ public class MainController {
         boolean success = bookRepository.addBookToUserList(currentUser.getUserId(), book.getBookId(), status);
 
         if (success) {
-            // Refresh data immediately
-            Platform.runLater(() -> {
-                refreshAllData();
 
-                // Switch to the appropriate tab
-                if (tabPane != null && tabIndex >= 0 && tabIndex < tabPane.getTabs().size()) {
+            searchField.clear();
+            selectedReadingBook = null;
+            updateProgressControls(false);
+
+
+            refreshAllData();
+
+            // Switch to the appropriate tab
+            if (tabPane != null && tabIndex >= 0 && tabIndex < tabPane.getTabs().size()) {
+                Platform.runLater(() -> {
                     tabPane.getSelectionModel().select(tabIndex);
                     System.out.println(">>> Switched to tab " + tabIndex);
-                }
 
-                // Show notification
-                String message = status.equals("TO_READ")
-                        ? "added to your To Read list."
-                        : "added to Currently Reading.";
-                showNonBlockingAlert("Added!", "\"" + book.getTitle() + "\" " + message);
-            });
+                    // Force focus on the table
+                    switch (tabIndex) {
+                        case 0: readingTable.requestFocus(); break;
+                        case 1: toReadTable.requestFocus(); break;
+                        case 2: completedTable.requestFocus(); break;
+                    }
+                });
+            }
+
+            showNonBlockingAlert("Success!",
+                    "\"" + book.getTitle() + "\" added to " +
+                            (status.equals("TO_READ") ? "To Read list" :
+                                    status.equals("READING") ? "Currently Reading" : "Completed"));
         } else {
             showAlert("Error", "Failed to add book. It may already be in your list.");
         }

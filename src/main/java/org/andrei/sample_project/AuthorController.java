@@ -145,7 +145,7 @@ public class AuthorController {
 
         authorImageView.setVisible(false);
     }
-
+//future implementation
     private void openWebsite(String url) {
         try {
             if (!url.startsWith("http"))

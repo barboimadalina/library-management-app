@@ -289,7 +289,7 @@ public class BookDialog {
 
         boolean isFavorite = favoriteRepository.isFavorite(currentUser.getUserId(), book.getBookId());
 
-        Button favoriteBtn = new Button(isFavorite ? "❤️ Favorited" : "🤍 Add to Favorites");
+        Button favoriteBtn = new Button(isFavorite ? "❤ Favorited" : "Add to Favorites");
         favoriteBtn.setStyle(isFavorite ?
                 "-fx-background-color: #ffe6e6; -fx-text-fill: #e74c3c; -fx-background-radius: 20;" :
                 "-fx-background-color: #f0f0f0; -fx-text-fill: #666; -fx-background-radius: 20;");
@@ -732,7 +732,7 @@ public class BookDialog {
 
         // Option 4: Toggle Favorite
         boolean isFavorite = favoriteRepository.isFavorite(currentUser.getUserId(), book.getBookId());
-        String favText = isFavorite ? "❤ Remove from Favorites" : "🤍 Add to Favorites";
+        String favText = isFavorite ? "❤ Remove from Favorites" : "Add to Favorites";
         Button favoriteBtn = new Button(favText);
         favoriteBtn.setStyle(isFavorite ?
                 "-fx-background-color: #e74c3c; -fx-text-fill: white;" :

@@ -364,6 +364,11 @@ public class UserProfileController {
 
         dialog.getDialogPane().setContent(scroll);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        // Set the owner of the dialog to ensure proper stage hierarchy
+        Stage mainStage = (Stage) menuButton.getScene().getWindow();
+        dialog.initOwner(mainStage);
+
         dialog.showAndWait();
     }
 
@@ -403,8 +408,16 @@ public class UserProfileController {
             UserProfileController controller = loader.getController();
             controller.setUsers(currentUser, user);
 
-            Stage stage = (Stage) menuButton.getScene().getWindow();
-            stage.setScene(new Scene(root, 900, 700));
+            // Create a new stage for the user profile
+            Stage newStage = new Stage();
+            newStage.setScene(new Scene(root, 900, 700));
+            newStage.setTitle(user.getFullName() + "'s Profile");
+
+            // Set owner to maintain window hierarchy
+            Stage currentStage = (Stage) menuButton.getScene().getWindow();
+            newStage.initOwner(currentStage);
+
+            newStage.show();
 
         } catch (Exception e) {
             System.out.println(">>> ERROR navigating to user profile: " + e.getMessage());

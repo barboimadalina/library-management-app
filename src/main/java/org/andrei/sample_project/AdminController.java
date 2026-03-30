@@ -947,7 +947,7 @@ public class AdminController {
 
     private boolean addBookToDatabase(String title, int authorId, String genre, int year, int pages,
                                       String description, String coverImagePath) {
-        String sql = "INSERT INTO books (title, author_id, genre, publication_year, page_count, description, cover_image) " +
+        String sql = "INSERT INTO books (title, author_id, genre, publication_year, page_count, description, cover_image_url) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = ConnectionFactory.getConnection();
@@ -980,14 +980,23 @@ public class AdminController {
 
     @FXML
     protected void onUpdateBook() {
+        // If we're already editing a book, save the changes
+        if (selectedBookForEdit != null) {
+            saveUpdatedBook();
+            return;
+        }
+
+        // Otherwise, load a book for editing
         Book selectedBook = booksTable.getSelectionModel().getSelectedItem();
 
         if (selectedBook == null) {
-            showAlert(Alert.AlertType.WARNING, "Warning", "Please select a book to update!");
+            showAlert(Alert.AlertType.WARNING, "Warning", "Please select a book to edit!");
             return;
         }
 
         selectedBookForEdit = selectedBook;
+
+        // Load data into form
         titleField.setText(selectedBook.getTitle());
         authorIdField.setText(String.valueOf(selectedBook.getAuthorId()));
         genreField.setText(selectedBook.getGenre());
@@ -995,19 +1004,23 @@ public class AdminController {
         pagesField.setText(String.valueOf(selectedBook.getPageCount()));
         descriptionArea.setText(selectedBook.getDescription());
 
+        // Load cover image if exists
         if (selectedBook.getCoverImage() != null && !selectedBook.getCoverImage().isEmpty()) {
             try {
                 Image image = new Image("file:" + selectedBook.getCoverImage());
                 coverPreview.setImage(image);
                 coverPathLabel.setText("Current: " + Paths.get(selectedBook.getCoverImage()).getFileName());
             } catch (Exception e) {
-                // Ignore if image can't be loaded
+                coverPathLabel.setText("Current image unavailable");
             }
         }
 
+        // Change button text to indicate save mode (optional - if you want dynamic button text)
+        // updateBookButton.setText("Save Changes");
+
         showAlert(Alert.AlertType.INFORMATION, "Edit Mode",
                 "Book '" + selectedBook.getTitle() + "' loaded for editing.\n" +
-                        "Make changes and click 'Add Book' to save as new or 'Update' to modify existing.");
+                        "Make your changes and click 'Edit/Update Book' again to save.");
     }
 
     @FXML
@@ -1126,7 +1139,72 @@ public class AdminController {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to add author.");
         }
     }
+    private void saveUpdatedBook() {
+        // Validation
+        String title = titleField.getText().trim();
+        String authorIdText = authorIdField.getText().trim();
+        String genre = genreField.getText().trim();
+        String yearText = yearField.getText().trim();
+        String pagesText = pagesField.getText().trim();
+        String description = descriptionArea.getText().trim();
 
+        if (title.isEmpty() || authorIdText.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Title and Author ID are required!");
+            return;
+        }
+
+        int authorId, year = 0, pages = 0;
+        try {
+            authorId = Integer.parseInt(authorIdText);
+            if (!yearText.isEmpty()) year = Integer.parseInt(yearText);
+            if (!pagesText.isEmpty()) pages = Integer.parseInt(pagesText);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Error", "Author ID, Year, and Pages must be numbers!");
+            return;
+        }
+
+        // Get cover image path (use existing if no new image selected)
+        String coverImagePath = selectedBookForEdit.getCoverImage();
+        if (selectedImageFile != null) {
+            coverImagePath = saveUploadedImage();
+        }
+
+        // Update the book object
+        selectedBookForEdit.setTitle(title);
+        selectedBookForEdit.setAuthorId(authorId);
+        selectedBookForEdit.setGenre(genre);
+        selectedBookForEdit.setPublicationYear(year);
+        selectedBookForEdit.setPageCount(pages);
+        selectedBookForEdit.setDescription(description);
+        selectedBookForEdit.setCoverImage(coverImagePath);
+
+        // Save to database using the updateBook method you added to BookRepository
+        boolean success = bookRepository.updateBook(selectedBookForEdit);
+
+        if (success) {
+            showAlert(Alert.AlertType.INFORMATION, "Success",
+                    "Book '" + selectedBookForEdit.getTitle() + "' updated successfully!");
+            loadAllBooks(); // Refresh the table
+            clearBookForm();
+            resetImageSelection();
+            selectedBookForEdit = null;
+
+            // Reset button text if you changed it (optional)
+            // updateBookButton.setText("Edit/Update Book");
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to update book. Check Author ID exists.");
+        }
+    }
+    @FXML
+    protected void onCancelEdit() {
+        if (selectedBookForEdit != null) {
+            showAlert(Alert.AlertType.INFORMATION, "Edit Cancelled",
+                    "Edit mode cancelled for '" + selectedBookForEdit.getTitle() + "'.");
+            selectedBookForEdit = null;
+            clearBookForm();
+            resetImageSelection();
+        }
+    }
     @FXML
     protected void onUpdateAuthor() {
         if (selectedAuthorForEdit == null) {

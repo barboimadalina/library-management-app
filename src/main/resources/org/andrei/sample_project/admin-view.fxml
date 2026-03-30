@@ -20,16 +20,16 @@
                 <Insets left="20" right="20"/>
             </padding>
 
-            <Label text="📚 Admin Dashboard" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;"/>
+            <Label text="Admin Dashboard" style="-fx-text-fill: white; -fx-font-size: 20; -fx-font-weight: bold;"/>
 
             <Region HBox.hgrow="ALWAYS"/>
 
             <Label fx:id="welcomeLabel" text="Welcome, Admin" style="-fx-text-fill: white; -fx-font-size: 14;"/>
 
-            <Button text="🔄 Refresh" onAction="#onRefresh"
+            <Button text="Refresh" onAction="#onRefresh"
                     style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-background-radius: 15;"/>
 
-            <Button text="🚪 Logout" onAction="#onLogout"
+            <Button text="Logout" onAction="#onLogout"
                     style="-fx-background-color: rgba(255,255,255,0.2); -fx-text-fill: white; -fx-background-radius: 15;"/>
         </HBox>
     </top>
@@ -44,16 +44,16 @@
 
             <TabPane VBox.vgrow="ALWAYS" style="-fx-background-color: transparent;">
 
-                <Tab text="👥 Users" closable="false">
+                <Tab text="Users" closable="false">
                     <VBox spacing="10" style="-fx-padding: 15;">
                         <Label text="User Management" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
 
                         <!-- Search and View Profile -->
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <TextField fx:id="userSearchField" promptText="Search users..." prefWidth="250"/>
-                            <Button text="🔍 Search" onAction="#onSearchUsers"/>
+                            <Button text="Search" onAction="#onSearchUsers"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="👁 View Profile" onAction="#onViewUserProfile"
+                            <Button text="View Profile" onAction="#onViewUserProfile"
                                     style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
                         </HBox>
 
@@ -70,7 +70,7 @@
                     </VBox>
                 </Tab>
 
-                <Tab text="📖 Books" closable="false">
+                <Tab text="Books" closable="false">
                     <HBox spacing="15" style="-fx-padding: 15;">
 
                         <VBox spacing="10" HBox.hgrow="ALWAYS">
@@ -79,7 +79,11 @@
                             <HBox spacing="10" alignment="CENTER_LEFT">
                                 <TextField fx:id="bookSearchField" promptText="Search books..." prefWidth="200"/>
                                 <ComboBox fx:id="bookSortCombo" promptText="Sort by" prefWidth="150"/>
-                                <Button text="🔍 Apply" onAction="#onFilterBooks"/>
+                                <Button text="Apply" onAction="#onFilterBooks"/>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <!-- ADDED DELETE BUTTON TO BOOKS TABLE SECTION -->
+                                <Button text="Delete Selected" onAction="#onDeleteBook"
+                                        style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
                             </HBox>
 
                             <TableView fx:id="booksTable" VBox.vgrow="ALWAYS">
@@ -99,10 +103,13 @@
                               style="-fx-padding: 15; -fx-background-color: white; -fx-background-radius: 10;">
                             <Label text="Add / Edit Book" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
 
+                            <!-- Status indicator for edit mode -->
+                            <Label fx:id="editModeLabel" text="" style="-fx-text-fill: #FF9800; -fx-font-size: 12;" visible="false"/>
+
                             <TextField fx:id="titleField" promptText="Title *"/>
                             <HBox spacing="10">
                                 <TextField fx:id="authorIdField" promptText="Author ID *" HBox.hgrow="ALWAYS"/>
-                                <Button text="📋 Select" onAction="#onSelectAuthor" prefWidth="80"/>
+                                <Button text="Select" onAction="#onSelectAuthor" prefWidth="80"/>
                             </HBox>
                             <TextField fx:id="genreField" promptText="Genre"/>
                             <TextField fx:id="yearField" promptText="Publication Year"/>
@@ -110,25 +117,27 @@
                             <TextArea fx:id="descriptionArea" promptText="Description..." prefRowCount="3"/>
 
                             <HBox spacing="10" alignment="CENTER_LEFT">
-                                <Button fx:id="uploadImageButton" text="📷 Upload Cover" onAction="#onUploadImage"/>
-                                <Button text="❌ Clear" onAction="#onClearImage"/>
+                                <Button fx:id="uploadImageButton" text="Upload Cover" onAction="#onUploadImage"/>
+                                <Button text="Clear" onAction="#onClearImage"/>
                             </HBox>
                             <Label fx:id="coverPathLabel" text="No image selected" style="-fx-text-fill: gray; -fx-font-size: 11;"/>
                             <ImageView fx:id="coverPreview" fitWidth="80" preserveRatio="true"/>
 
                             <HBox spacing="10">
-                                <Button text="➕ Add" onAction="#onAddBook"
+                                <Button text="Add New" onAction="#onAddBook"
                                         style="-fx-background-color: #4CAF50; -fx-text-fill: white;" HBox.hgrow="ALWAYS"/>
-                                <Button text="✏Update" onAction="#onUpdateBook"
+                                <Button text="Edit/Save" onAction="#onUpdateBook" fx:id="updateBookButton"
                                         style="-fx-background-color: #2196F3; -fx-text-fill: white;" HBox.hgrow="ALWAYS"/>
                             </HBox>
-                            <Button text="🗑Delete" onAction="#onDeleteBook"
-                                    style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
+
+                            <!-- New Cancel Edit button -->
+                            <Button text="Cancel Edit" onAction="#onCancelEdit" fx:id="cancelEditButton"
+                                    style="-fx-background-color: #9E9E9E; -fx-text-fill: white;" visible="false"/>
                         </VBox>
                     </HBox>
                 </Tab>
 
-                <Tab text="✍Authors" closable="false">
+                <Tab text="Authors" closable="false">
                     <HBox spacing="15" style="-fx-padding: 15;">
                         <!-- Authors Table -->
                         <VBox spacing="10" HBox.hgrow="ALWAYS">
@@ -136,8 +145,8 @@
                                 <Label text="All Authors" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                                 <Region HBox.hgrow="ALWAYS"/>
                                 <TextField fx:id="authorSearchField" promptText="Search authors..." prefWidth="200"/>
-                                <Button text="🔍 Search" onAction="#onSearchAuthors"/>
-                                <Button text="👁View/Edit" onAction="#onViewEditAuthor"
+                                <Button text="Search" onAction="#onSearchAuthors"/>
+                                <Button text="View/Edit" onAction="#onViewEditAuthor"
                                         style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
                             </HBox>
 
@@ -163,18 +172,18 @@
                             <TextField fx:id="authorWebsiteField" promptText="Website URL"/>
 
                             <HBox spacing="10">
-                                <Button text="➕ Add" onAction="#onAddAuthor"
+                                <Button text="Add" onAction="#onAddAuthor"
                                         style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-                                <Button text="✏ Update" onAction="#onUpdateAuthor"
+                                <Button text="Update" onAction="#onUpdateAuthor"
                                         style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-                                <Button text="🗑Delete" onAction="#onDeleteAuthor"
+                                <Button text="Delete" onAction="#onDeleteAuthor"
                                         style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
                             </HBox>
                         </VBox>
                     </HBox>
                 </Tab>
 
-                <Tab text="⭐ Reviews" closable="false">
+                <Tab text="Reviews" closable="false">
                     <VBox spacing="15" style="-fx-padding: 15;">
                         <!-- Header with filter -->
                         <HBox spacing="15" alignment="CENTER_LEFT">
@@ -206,28 +215,28 @@
                         </TableView>
 
                         <HBox spacing="10" alignment="CENTER_RIGHT">
-                            <Button text="👁 View" onAction="#onViewReview"
+                            <Button text="View" onAction="#onViewReview"
                                     style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-                            <Button text="🗑 Delete" onAction="#onDeleteReview"
+                            <Button text="Delete" onAction="#onDeleteReview"
                                     style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
                         </HBox>
                     </VBox>
                 </Tab>
 
-                <Tab text="🏆 Challenges" closable="false">
+                <Tab text="Challenges" closable="false">
                     <VBox spacing="15" style="-fx-padding: 15;">
                         <!-- Header -->
                         <HBox spacing="15" alignment="CENTER_LEFT">
                             <Label text="App Challenges" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Region HBox.hgrow="ALWAYS"/>
 
-                            <Button text="➕ Create Challenge" onAction="#onAddChallenge"
+                            <Button text="Create Challenge" onAction="#onAddChallenge"
                                     style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
-                            <Button text="✏ Edit" onAction="#onEditChallenge"
+                            <Button text="Edit" onAction="#onEditChallenge"
                                     style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-                            <Button text="👁 View Details" onAction="#onViewChallenge"
+                            <Button text="View Details" onAction="#onViewChallenge"
                                     style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
-                            <Button text="🗑 Delete" onAction="#onDeleteChallenge"
+                            <Button text="Delete" onAction="#onDeleteChallenge"
                                     style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
                         </HBox>
 
@@ -248,12 +257,12 @@
                     </VBox>
                 </Tab>
 
-                <Tab text="🚀 Coming Soon" closable="false">
+                <Tab text="Coming Soon" closable="false">
                     <VBox spacing="15" style="-fx-padding: 15;">
                         <HBox spacing="10" alignment="CENTER_LEFT">
                             <Label text="Upcoming Book Releases" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
                             <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="➕ Add Announcement" onAction="#onAddComingSoon"
+                            <Button text="Add Announcement" onAction="#onAddComingSoon"
                                     style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
                         </HBox>
 
@@ -272,9 +281,9 @@
                         </TableView>
 
                         <HBox spacing="10" alignment="CENTER_RIGHT">
-                            <Button text="✏ Edit" onAction="#onEditComingSoon"
+                            <Button text="Edit" onAction="#onEditComingSoon"
                                     style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-                            <Button text="🗑 Delete" onAction="#onDeleteComingSoon"
+                            <Button text="Delete" onAction="#onDeleteComingSoon"
                                     style="-fx-background-color: #f44336; -fx-text-fill: white;"/>
                         </HBox>
                     </VBox>
